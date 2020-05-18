@@ -10,6 +10,7 @@ abstract public class ArticlePageObject extends MainPageObject{
     protected static String FOOTER_ELEMENT;
     protected static String OPTIONS_BUTTON;
     protected static String OPTIONS_ADD_TO_MY_LIST_BUTTON;
+    protected static String OPTIONS_REMOVE_FROM_MY_LIST_BUTTON;
     protected static String ADD_TO_MY_LIST_OVERLAY;
     protected static String MY_LIST_NAME_INPUT;
     protected static String MY_LIST_OK_BUTTON;
@@ -59,9 +60,14 @@ abstract public class ArticlePageObject extends MainPageObject{
     }
 
     public void addArticlesToMySaved(){
+        if (Platform.getInstance().isMW()){
+            this.removeArticleFromSavedIfItAdded();
+        }
         this.waitForElementAndClick(OPTIONS_ADD_TO_MY_LIST_BUTTON,"Cannot find option to add article to reading list", 5);
 
-        this.waitForElementAndClick(PLACES_AND_CLOSE, "No popup for closing", 10);
+        if (!Platform.getInstance().isMW()) {
+            this.waitForElementAndClick(PLACES_AND_CLOSE, "No popup for closing", 10);
+        }
     }
 
     public void addMoreThenOneArticleToMySaved(){
@@ -75,8 +81,22 @@ abstract public class ArticlePageObject extends MainPageObject{
                 "Cannot find option to add article to reading list", 10);
     }
 
-    public void closeArticle(){
-        this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON,"Cannot close article, cannot find X link", 5);
+    public void removeArticleFromSavedIfItAdded() {
+        if(this.isElementPresent(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON)) {
+            this.waitForElementAndClick(OPTIONS_REMOVE_FROM_MY_LIST_BUTTON,
+                    "cannot click on remove button",1);
+            this.waitForElementPresent(OPTIONS_ADD_TO_MY_LIST_BUTTON,
+                    "Cannot find button to add an article to saved list after removing it from the list before");
+        }
+    }
+
+    public void closeArticle() {
+        if (Platform.getInstance().isAndroid() || Platform.getInstance().isIOS()) {
+            this.waitForElementAndClick(CLOSE_ARTICLE_BUTTON,
+                    "Cannot close article, cannot find X link", 5);
+        } else {
+            System.out.println("closeArticle() does nothing for " + Platform.getInstance().getPlatformVar());
+        }
     }
 
     public void assertTitleIsPresent(){
