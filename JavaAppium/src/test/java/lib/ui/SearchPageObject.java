@@ -30,6 +30,10 @@ abstract public class SearchPageObject extends MainPageObject {
         return SEARCH_RESULT_TITLE_AND_DESC_TPL.replace("{TITLE_DESC}",substring).replace("{title_desc}","title");
     }
 
+    private static String getTitleDescrSearchElement(String title, String desc){
+        return SEARCH_RESULT_TITLE_AND_DESC_TPL.replace("{TITLE_DESC}",desc).replace("{title}", title);
+    }
+
     public void initSearchInput() {
         this.waitForElementAndClick(SEARCH_INIT_ELEMENT,
                 "Cannot find and click search init element", 5);
@@ -88,18 +92,21 @@ abstract public class SearchPageObject extends MainPageObject {
 
     public void waitForElementByTitleAndDescription(String title, String description){
         System.out.println("We are searching for title: " + title + " and desc: " + description);
-        if(Platform.getInstance().isAndroid()){
+        if (Platform.getInstance().isAndroid()) {
             this.assertElementPresent(getTitleSearchElement(title),
                     "Here is no article with title '" + title + "' among search results.");
             this.assertElementPresent(getDescSearchElement(description),
                     "Here is no article with description '" + description + "' among search results.");
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             String xpathTitle = SEARCH_RESULT_TITLE_AND_DESC_TPL.replace("{TITLE_DESC}", title);
             this.assertElementPresent(xpathTitle,
                     "Here is no article with title '" + title + "' among search results.");
             String xpathDesc = SEARCH_RESULT_TITLE_AND_DESC_TPL.replace("{TITLE_DESC}", description);
             this.assertElementPresent(xpathDesc,
                     "Here is no article with description '" + description + "' among search results.");
+        } else if (Platform.getInstance().isMW()) {
+            this.assertElementPresent(getTitleDescrSearchElement(title, description),
+                    "Here is no article with title '" + title + "' and decription '" + description + "' among search results.");
         }
     }
 

@@ -60,13 +60,13 @@ public class SearchTests extends CoreTestCase {
     public void testCheckTitleAndDecription(){
         String searchLine = "Java";
         String firstTitle = "Java";
-        String firstDesc = "Island of Indonesia";
+        String firstDesc = "sland of Indonesia";
 
         String secondTitle = "JavaScript";
-        String secondDesc = "Programming language";
+        String secondDesc = "rogramming language";
 
         String thirdTitle = "Java (programming language)";
-        String thirdDesc = "Object-oriented programming language";
+        String thirdDesc = "bject-oriented programming language";
 
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
