@@ -1,5 +1,6 @@
 package lib.ui;
 
+import org.openqa.selenium.ElementNotInteractableException;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class AuthorizationPageObject extends MainPageObject {
@@ -8,6 +9,7 @@ public class AuthorizationPageObject extends MainPageObject {
             LOGIN_BUTTON = "xpath://body//div/a[text()='Log in']",
             LOGIN_INPUT = "css:input[name='wpName']",
             PASSWORD_INPUT = "css:input[name='wpPassword']",
+            LOGIN_BOX = "xpath://div[contains(@class,'position-fixed visible')]",
             SUBMIT_BUTTON = "css:button#wpLoginAttempt";
 
     public AuthorizationPageObject(RemoteWebDriver driver) {
@@ -16,6 +18,7 @@ public class AuthorizationPageObject extends MainPageObject {
 
     public void clivkAuthButton() {
         this.waitForElementPresent(LOGIN_BUTTON,"Cannot find auth button", 10);
+        this.waitForElementPresent(LOGIN_BOX,"Cannot find login box button", 10);
         this.waitForElementAndClick(LOGIN_BUTTON, "Cannot find and click auth button", 10);
     }
 

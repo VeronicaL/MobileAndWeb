@@ -39,7 +39,7 @@ abstract public class MyListsPageObject extends MainPageObject {
     }
     private void waitForArticleToDisappearByTitle(String articleTitle){
         String articleXpath = getSavedArticleXpathByTitle(articleTitle);
-        this.waitForElementNotPresent(articleXpath,"Saved article still present with title " + articleTitle, 15);
+        this.waitForElementNotPresent(articleXpath,"Saved article still present with title " + articleTitle, 30);
     }
 
     public void swipeByArticleToDelete(String articleTitle){
@@ -73,5 +73,10 @@ abstract public class MyListsPageObject extends MainPageObject {
 
     public void assertArticleIsPresent(String articleTitle){
         this.assertElementPresent(getSavedArticleXpathByTitle(articleTitle), "Needed article title " + articleTitle + " is absent");
+    }
+
+    public void clickBySavedArticle(String subString){
+        String searchResultXpath = getSavedArticleXpathByTitle(subString);
+        this.waitForElementAndClick(searchResultXpath, "Cannot find and click search result with substring " + subString, 15);
     }
 }

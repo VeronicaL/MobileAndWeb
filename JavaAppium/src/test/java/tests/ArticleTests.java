@@ -8,6 +8,9 @@ import org.junit.Test;
 
 public class ArticleTests extends CoreTestCase {
 
+    private static final String login = "Veronica148Lap";
+    private static final String password = "123VerWiki_1";
+
     @Test
     public void testCompareArticle(){
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
@@ -34,9 +37,9 @@ public class ArticleTests extends CoreTestCase {
     @Test
     public void testCheckManipulationWithTwoArticles(){
         String searchString = "Java";
-        String firstArticleLongTitle = "Object-oriented programming language";
-        String secondArticleLongTitle = "Programming language";
-        String shortSecondArticleTitle = "JavaScript";
+        String firstArticleLongTitle = "bject-oriented programming language";
+        String secondArticleLongTitle = "rogramming language";
+        String shortSecondArticleTitle = "avaScript";
 
         SearchPageObject searchPageObject = SearchPageObjectFactory.get(driver);
         searchPageObject.initSearchInput();
@@ -54,6 +57,15 @@ public class ArticleTests extends CoreTestCase {
             articlePageObject.addArticlesToMySaved();
         }
 
+        if (Platform.getInstance().isMW()) {
+            AuthorizationPageObject auth = new AuthorizationPageObject(driver);
+            auth.clivkAuthButton();
+            auth.enterLoginData(login, password);
+            auth.submitForm();
+            articlePageObject.waitForTitleElement();
+            assertEquals("We are not on the same page after login.", firstArticleTitle, articlePageObject.getArticleTitle());
+            articlePageObject.addArticlesToMySaved();
+        }
         articlePageObject.closeArticle();
 
         searchPageObject.initSearchInput();
@@ -61,15 +73,16 @@ public class ArticleTests extends CoreTestCase {
         searchPageObject.clickByArticleWithSubstring(secondArticleLongTitle);
 
         String secondArticleTitle = articlePageObject.getArticleTitle();
-        if(Platform.getInstance().isAndroid()){
+        if(Platform.getInstance().isAndroid() ) {
             articlePageObject.addNotFirstArticleToMyList();
-        } else {
+        } else if(Platform.getInstance().isIOS()) {
             articlePageObject.addMoreThenOneArticleToMySaved();
         }
 
         articlePageObject.closeArticle();
 
         NavigationUI navigationUI = NavigationUIFactory.get(driver);
+        navigationUI.openNavigation();
         navigationUI.clickMyLists();
 
         MyListsPageObject myListsPageObject = MyListsPageObjectFactory.get(driver);
@@ -84,12 +97,18 @@ public class ArticleTests extends CoreTestCase {
             String articleTitle = articlePageObject.getArticleTitle();
             assertTrue("Title of second saved article and opened are differ: " +
                     secondArticleTitle + " and " + articleTitle, articleTitle.equals(secondArticleTitle));
-        } else {
+        } else if(Platform.getInstance().isIOS()){
             myListsPageObject.shareArticle(shortSecondArticleTitle);
             ShareArticlePageObject shareArticlePageObject = ShareArticleFactory.get(driver);
             String sharedTitle = shareArticlePageObject.getSharedTitleName();
             assertTrue("Title of second saved article and shared are differ: " +
                     shortSecondArticleTitle + " and " + sharedTitle, sharedTitle.contains(shortSecondArticleTitle));
+        } else if(Platform.getInstance().isMW()) {
+            myListsPageObject.assertArticleIsPresent(secondArticleTitle);
+            myListsPageObject.clickBySavedArticle(secondArticleTitle);
+            String articleTitle = articlePageObject.getArticleTitle();
+            assertTrue("Title of second saved article and opened are differ: " +
+                    secondArticleTitle + " and " + articleTitle, articleTitle.equals(secondArticleTitle));
         }
     }
 
